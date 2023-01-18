@@ -1,0 +1,50 @@
+#!/bin/bash
+
+banner=$(curl -ks "https://pastebin.com/raw/E1xgMka7")
+
+if [ "$1" == "" ]
+then
+clear
+echo -e "$banner"
+echo -e "\nPut your webserver example: $0 url"
+echo -e "if you have a cookie use: $0 url cookie"
+echo -e "\nexamples use:"
+echo -e "example: $0 http://www.bancocn.com/cat.php?id=1 cf_clearance=Tgt3zCKV5kU1JN10Njo3DTilSmRUTAnYBIes6NqBaRc-1671851209-0-150"
+echo -e "example: $0 http://testphp.vulnweb.com/listproducts.php?cat=1"
+
+
+elif [ "$2" == "" ]
+then
+url=$(echo -e "$1" |awk -F / '{print $3}')
+clear
+echo -e "$banner"
+echo -e "\ntesting: $url"
+while read error
+do
+testing=$(curl -ks "$1%27"|grep -oP "$error"|head -n1)
+testing2=$(curl -ks "$1%22"|grep -oP "$error"|head -n1)
+er=$(echo -e "$error")
+if [[ "$testing" == "$er" || "$testing2" == "$er" ]]
+then
+echo -e "\n$1 - possible vulnerable to SQL injection, Try SQL injection manually to verificy it. - ERROR: $error"
+fi
+done < errorList.txt
+
+
+else
+url=$(echo -e "$1" |awk -F / '{print $3}')
+clear
+echo -e "$banner"
+echo -e "\ntesting: $url and cookie: $2"
+while read error2
+do
+testing3=$(curl -ks "$1%27" -H "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:108.0) Gecko/20100101 Firefox/108.0" -H "Cookie: $2"|grep -oP "$error2"|head -n1)
+testing4=$(curl -ks "$1%22" -H "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:108.0) Gecko/20100101 Firefox/108.0" -H "Cookie: $2"|grep -oP "$error2"|head -n1)
+er=$(echo -e "$error2")
+if [[ "$testing3" == "$er" || "$testing4" == "$er" ]]
+then
+echo -e "\n$1 - possible vulnerable to SQL injection, Try SQL injection manually to verificy it. - ERROR: $error2"
+fi
+done < errorList.txt
+
+fi
