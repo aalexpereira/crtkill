@@ -4,10 +4,10 @@ sqli scanner
 
 install:
 
-git clonehttps://github.com/lexy-1/crtkill/
--
+git clone https://github.com/lexy-1/crtkill/
+
 cd crtkill
--
+
 ./crtkill
 
 note:
